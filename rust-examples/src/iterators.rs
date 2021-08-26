@@ -1,20 +1,18 @@
 
 
-// Closures are functions that can capture the enclosing environment.
-// For example, a closure that captures the x variable:
-//
-// |val| val + x
-//
-// The syntax and capabilities of closures make them very convenient for on the fly usage.
-// Calling a closure is exactly like calling a function.
-// However, both input and return types can be inferred and input variable names must be specified.
+/// Closures are functions that can capture the enclosing environment.
+/// For example, a closure that captures the x variable:
+///
+/// |val| val + x
+///
+/// The syntax and capabilities of closures make them very convenient for on the fly usage.
+/// Calling a closure is exactly like calling a function.
+/// However, both input and return types can be inferred and input variable names must be specified.
 #[test]
 fn closures1() {
     // here we need to give some type information to the argument `x`, in order for type inference to work out
     let double = |x: f64| x * 2.0;
     println!("{}", double(3.0));
-
-    
 }
 
 #[test]
@@ -50,12 +48,15 @@ fn closures2() {
     // trying to use `x` here would result in an error, as `x`
 }
 
+
 #[test]
 fn iterators1() {
     let x = [1, 2, 3, 4, 7, 9, 2];
 
     // iterators in Rust are an example of a "zero-cost abstraction"
-    for item in x.iter().filter(|x| *x % 2 == 0).map(|x| x * x) {
+    for item in x.iter()
+      .filter(|x| *x % 2 == 0)
+      .map(|x| x * x) {
         println!("{}", item);
     }
 }
@@ -64,9 +65,9 @@ use rand::{Rng, thread_rng};
 use rand::distributions::Alphanumeric;
 use rayon::prelude::*;
 
-// This example uses the "rayon" library to create a list of random strings, and sort them in parallel.
-// (automatically splitting off into separate threads to make use of multicore CPUs - how cool!!)
-// https://rust-lang-nursery.github.io/rust-cookbook/concurrency/parallel.html
+/// This example uses the "rayon" library to create a list of random strings, and sort them in parallel.
+/// (automatically splitting off into separate threads to make use of multicore CPUs - how cool!!)
+/// https://rust-lang-nursery.github.io/rust-cookbook/concurrency/parallel.html
 #[test]
 fn parallel_iterators() {
     let mut vec = vec![String::new(); 100_000];

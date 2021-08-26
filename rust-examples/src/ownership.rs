@@ -8,76 +8,98 @@
 // In this chapter, we’ll talk about ownership as well as several related features:
 // borrowing, slices, and how Rust lays data out in memory.
 
-fn do_something_with_string(mut x: String) {
-    x.push_str(", world");
-    println!("x = {}", x);
+#[derive(Debug, Clone)]
+struct Fizzler {
+    amount: i32
+}
+
+// this allows us to print something out when MyType is 'dropped' (no longer needed / deallocated)
+impl Drop for Fizzler {
+    fn drop(&mut self) {
+        println!("I'm being deallocated!");
+    }
+}
+
+fn fizzle(m: Fizzler) {
+    println!("Fizzling with amount={}", m.amount);
 }
 
 #[test]
 fn ownership1() {
-    // by default, most of Rust's simplest types (string literals, numbers) are copyable,
-    // so we need to explicitly allocate memory for this string
-    // in order to start caring about ownership etc...
-    let x: String = "hello".to_owned();
+    let fizzler = Fizzler {
+        amount: 3
+    };
 
-    do_something_with_string(x);
+    // transfers ownership into `fizzle`
+    fizzle(fizzler);
 
-    // now cannot use `x` anymore, ownership has been transferred into `do_something_with_string`
+    // now cannot use `fizzler` anymore, ownership has been transferred into call to `fizzle`
 
+    // uncommenting this will make the code not compile!
+    //
+    // println!("{}", fizzler.amount);
 }
 
 #[test]
 fn ownership2() {
-    let x: String = "hello".to_owned();
+    let fizzler = Fizzler {
+        amount: 3
+    };
 
-    do_something_with_string(x.clone());
+    fizzle(fizzler.clone());
 
-    // now can still use `x`, as we made a deep copy to pass into the function
-    println!("{}", x);
+    // now can still use `fizzler`, as we made a deep copy to pass into the function
+    println!("{:?}", fizzler);
 }
 
-fn do_something_else_with_string(x: String) -> String {
-    println!("I am doing something with string: {}", x);
-    return x;
+fn fizzle2(m: Fizzler) -> Fizzler {
+    println!("Fizzling with amount={}", m.amount);
+
+    // same as: `return m;`
+    m 
 }
 
 #[test]
 fn ownership3() {
-    let x: String = "hello".to_owned();
+    let fizzler = Fizzler {
+        amount: 3
+    };
 
-    let x = do_something_else_with_string(x);
+    let fizzler = fizzle2(fizzler);
 
-    // now can still use `x`, as we got back ownership as the function returned...
-    println!("We have the string again: {}", x);
+    // now can use `fizzler` again
+    println!("{:?}", fizzler);
 }
 
-fn do_something_else_with_borrowed_string(x: &String) {
-    println!("I am doing something with string: {}", x);
+fn fizzle3(m: &Fizzler) {
+    println!("Fizzling with amount={}", m.amount);
 }
 
 #[test]
 fn ownership4() {
-    let x: String = "hello".to_owned();
+    let fizzler = Fizzler {
+        amount: 3
+    };
 
-    // we use the `&` to create a **reference** to x
-    // (implemented as a pointer, but is subject to additional rules)
-    do_something_else_with_borrowed_string(&x);
+    // we use the `&` to create a **reference** to `fizzler`
+    // (references are internallly implemented as pointers, but subject to additional rules)
+    fizzle3(&fizzler);
 
     // now can still use `x`, as we got back ownership as the function returned...
-    println!("We have the string again: {}", x);
-}
-
-// hot tip: use &str instead of &String for added generality (i.e.: works with string literals as well)
-fn do_something_with_str(x: &str) {
-    println!("I am doing something with string: {}", x);
+    println!("We have the string again: {:?}", fizzler);
 }
 
 #[test]
-fn ownership5() {
-    let x: String = "hello".to_owned();
+fn iterator_invalidation() {
+    let mut xs = Vec::new();
+    xs.push(1);
+    xs.push(2);
+    xs.push(3);
 
-    // look ma! it works with both references to Strings, and with string literals (&'static str)
-    do_something_with_str(&x);
-    do_something_with_str("world");
-
+    for x in xs.iter() {
+        println!("{}", x);
+        // Rust only allows one of ALIASING or MUTABILTY, not both at the same time.
+        // This code would violate that constraint, hence doesn't compile.
+        // xs.remove(0);
+    }
 }

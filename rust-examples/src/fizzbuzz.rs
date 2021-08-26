@@ -1,3 +1,6 @@
+//! A series of progressively more complicated implementations of fizzbuzz,
+//! which show off different Rust features.
+
 use itertools::Itertools;
 use std::borrow::Cow;
 

@@ -1,5 +1,5 @@
-// this example courtesy of:
-// https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/
+//! this example courtesy of:
+//! https://depth-first.com/articles/2020/01/27/rust-ownership-by-example/
 
 // this doesn't compile
 // fn longest(x: &str, y: &str) -> &str {
@@ -10,6 +10,7 @@
 //     }
 // }
 
+// we need explicit lifetime annotations here...
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.bytes().len() > y.bytes().len() {
         x
