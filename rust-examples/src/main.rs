@@ -20,6 +20,8 @@ mod lifetimes;
 mod type_inference;
 #[cfg(test)]
 mod concurrency;
+#[cfg(test)]
+mod traits;
 
 fn main() {
     println!("Hello, world");

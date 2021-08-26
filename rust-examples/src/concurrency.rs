@@ -20,7 +20,7 @@ fn no_shared_data() {
 }
 
 #[test]
-fn no_data_race() {
+fn data_race() {
     let mut x = 5;
 
     let handle = thread::spawn(|| {
