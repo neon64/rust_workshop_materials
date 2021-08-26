@@ -13,11 +13,10 @@ int main() {
 
     int *dangling = &data->x;
 
-    // we're done with `data` now... right? RIGHT?
+    // In the real world, this call to `free` could be
+    //  hidden away in some other function.
     free(data);
 
-    // WRONG: `dangling` refers to memory owned by the allocation of `data`.
-    // This probably won't even crash. Instead it will print GARBAGE, potentially corrupting rest of program.
     printf("should print zero: %d\n", *dangling);
 
     return 0;
